@@ -9,6 +9,7 @@ import application.Main;
 import gui.listeners.DataChangeListener;
 import gui.util.Alerts;
 import gui.util.Utils;
+import javafx.beans.property.ReadOnlyObjectWrapper;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -18,6 +19,7 @@ import javafx.fxml.Initializable;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
+import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
@@ -36,6 +38,9 @@ public class DepartmentListController implements Initializable, DataChangeListen
 	
 	@FXML
 	private TableColumn<Department, Integer> tableColumnId;
+	
+	@FXML
+	private TableColumn<Department, Department> tableColumnEdit;
 	
 	@FXML
 	private TableColumn<Department, String> tableColumnName;
@@ -80,6 +85,7 @@ public class DepartmentListController implements Initializable, DataChangeListen
 		List<Department> list = service.findAll();
 		obsList = FXCollections.observableArrayList(list);
 		tableViewDepartment.setItems(obsList);
+		initEditButtons();
 	}
 	
 	private void createDialogForm(Department department, String absouluteName, Stage parentStage) {
@@ -106,7 +112,29 @@ public class DepartmentListController implements Initializable, DataChangeListen
 		}
 	}
 
-
+	private void initEditButtons() {
+		tableColumnEdit.setCellValueFactory(param -> new ReadOnlyObjectWrapper<>(param.getValue()));
+		tableColumnEdit.setCellFactory(param -> new TableCell<Department, Department>() {
+			private final Button button = new Button("edit");
+			
+			@Override
+			protected void updateItem(Department department, boolean empty) {
+				super.updateItem(department, empty);
+				
+				if (department == null) {
+					setGraphic(null);
+					return;
+				}
+				
+				setGraphic(button);
+				button.setOnAction(
+					event -> createDialogForm(
+						department, "/gui/DepartmentForm.fxml", Utils.currentStage(event)));
+			}
+		});
+	}
+	
+	
 	@Override
 	public void onDataChanged() {
 		updateTableView();
