@@ -108,7 +108,7 @@ public class SellerListController implements Initializable, DataChangeListener {
 		obsList = FXCollections.observableArrayList(list);
 		tableViewSeller.setItems(obsList);
 		initEditButtons();
-		initdeleteButtons();
+		initDeleteButtons();
 	}
 	
 	private void createDialogForm(Seller department, String absouluteName, Stage parentStage) {
@@ -160,7 +160,7 @@ public class SellerListController implements Initializable, DataChangeListener {
 	}
 	
 	
-	private void initdeleteButtons() {
+	private void initDeleteButtons() {
 		tableColumnDelete.setCellValueFactory(param -> new ReadOnlyObjectWrapper<>(param.getValue()));
 		tableColumnDelete.setCellFactory(param -> new TableCell<Seller, Seller>() {
 			private final Button button = new Button("delete");
